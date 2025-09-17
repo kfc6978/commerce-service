@@ -18,7 +18,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private long id;
+    private int id;
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -62,6 +62,7 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<UserSegment> userSegments;
+
 }
 // 登入時...
 // FetchType.LAZY
