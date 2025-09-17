@@ -3,6 +3,8 @@ package com.gtelant.commerce.service.services;
 import com.gtelant.commerce.service.models.User;
 import com.gtelant.commerce.service.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +22,10 @@ public class UserService {
 
     public List<User> getAllUsers(){
         return userRepository.findAll();
+    }
+
+    public Page<User> getAllUsers(PageRequest pageRequest){
+        return userRepository.findAll(pageRequest);
     }
 
     public User getUserById(int id){

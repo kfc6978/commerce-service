@@ -7,9 +7,12 @@ import com.gtelant.commerce.service.models.User;
 import com.gtelant.commerce.service.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,6 +45,15 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers().stream()
                 .map(userMapper::toUserResponse)
                 .collect(Collectors.toList()));
+    }
+
+    @GetMapping("/page")
+    public Page<UserResponse> getAllUsersPages(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return userService.getAllUsers(pageRequest).map(userMapper::toUserResponse);
     }
 
     @GetMapping("/{id}")
