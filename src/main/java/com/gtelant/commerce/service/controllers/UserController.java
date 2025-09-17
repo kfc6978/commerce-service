@@ -10,10 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/v1/users")
+@RequestMapping("/users")
 @CrossOrigin("*")
 
 public class UserController {
@@ -55,6 +56,24 @@ public class UserController {
         );
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserResponse>> getAllUsers(){
+        List<User> users =userRepository.findAll();
+        return ResponseEntity.ok(users.stream().map(UserResponse::new).toList());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponse> getUserById(@PathVariable int id){
+        Optional<User> user = userRepository.findById(id);
+
+        if(user.isPresent()){
+            UserResponse response = new UserResponse(user.get());
+            return ResponseEntity.ok(response);
+        }else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping("/{id}")
