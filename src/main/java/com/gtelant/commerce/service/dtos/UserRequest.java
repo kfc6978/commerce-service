@@ -1,6 +1,5 @@
-package com.gtelant.commerce.service.responses;
+package com.gtelant.commerce.service.dtos;
 
-import com.gtelant.commerce.service.models.UserSegment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,11 +13,12 @@ public class UserRequest {
 
     private String firstName;
     private String lastName;
-    private LocalDate birthday;
     private String email;
+    private LocalDate birthday;
     private String address;
     private String city;
     private String zipcode;
     private String password;
+    private String role;
     private boolean hasNewsletter;
 }

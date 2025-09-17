@@ -21,6 +21,8 @@ public class Segment {
     @Column(name = "segment_id")
     private Integer id;
 
+    private String Tag;
+
     //@CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -29,6 +31,5 @@ public class Segment {
     private LocalDateTime deleteAt;
 
     @OneToMany(mappedBy = "segment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Column(name = "segment")
     private List<UserSegment> userSegments;
 }

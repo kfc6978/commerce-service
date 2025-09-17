@@ -1,118 +1,73 @@
 package com.gtelant.commerce.service.controllers;
 
+import com.gtelant.commerce.service.dtos.UserRequest;
+import com.gtelant.commerce.service.dtos.UserResponse;
+import com.gtelant.commerce.service.mappers.UserMapper;
 import com.gtelant.commerce.service.models.User;
-import com.gtelant.commerce.service.repositories.UserRepository;
-import com.gtelant.commerce.service.responses.UserRequest;
-import com.gtelant.commerce.service.responses.UserResponse;
+import com.gtelant.commerce.service.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
 @CrossOrigin("*")
 
 public class UserController {
-    private final UserRepository userRepository;
+    private final UserService userService;
+    private final UserMapper userMapper;
 
     @Autowired
-    public UserController(UserRepository userRepository){
-        this.userRepository =userRepository;
+    public UserController(UserService userService, UserMapper userMapper){
+        this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     @Operation
     @PostMapping
-    public ResponseEntity<UserRequest> createUser(@RequestBody UserRequest request){
-        User user = new User();
-
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setBirthday(request.getBirthday());
-        user.setEmail(request.getEmail());
-        user.setAddress(request.getAddress());
-        user.setCity(request.getCity());
-        user.setZipcode(request.getZipcode());
-        user.setPassword(request.getPassword());
-        user.setHasNewsletter(request.isHasNewsletter());
-        user.setCreatedAt(LocalDateTime.now());
-        user.setRole("ROLE_USER");
-
-        User saveUser = userRepository.save(user);
-        UserRequest response = new UserRequest(
-                saveUser.getFirstName(),
-                saveUser.getLastName(),
-                saveUser.getBirthday(),
-                saveUser.getEmail(),
-                saveUser.getAddress(),
-                saveUser.getCity(),
-                saveUser.getZipcode(),
-                saveUser.getPassword(),
-                saveUser.isHasNewsletter()
-        );
-
-        return ResponseEntity.ok(response);
+    public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest userRequest) {
+        User user = userMapper.toUser(userRequest);
+        User createdUser = userService.createUser(user);
+        return ResponseEntity.ok(userMapper.toUserResponse(createdUser));
     }
+
 
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers(){
-        List<User> users =userRepository.findAll();
-        return ResponseEntity.ok(users.stream().map(UserResponse::new).toList());
+
+        return ResponseEntity.ok(userService.getAllUsers().stream()
+                .map(userMapper::toUserResponse)
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable int id){
-        Optional<User> user = userRepository.findById(id);
-
-        if(user.isPresent()){
-            UserResponse response = new UserResponse(user.get());
-            return ResponseEntity.ok(response);
+        User user = userService.getUserById(id);
+        if (user == null){
+        return ResponseEntity.notFound().build();
         }else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(userMapper.toUserResponse(user));
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> updateUserById(@PathVariable int id, @RequestBody UserRequest request){
-        Optional<User> user = userRepository.findById(id);
-        if(user.isPresent()){
-            User updateUser = user.get();
-
-            updateUser.setFirstName(request.getFirstName());
-            updateUser.setLastName(request.getLastName());
-            updateUser.setBirthday(request.getBirthday());
-            updateUser.setEmail(request.getEmail());
-            updateUser.setLastSeenAt(LocalDateTime.now());
-            updateUser.setHasNewsletter(request.isHasNewsletter());
-
-            updateUser = userRepository.save(updateUser);
-            UserResponse response = new UserResponse(
-                    updateUser.getId(),
-                    updateUser.getFirstName(),
-                    updateUser.getLastName(),
-                    updateUser.getBirthday(),
-                    updateUser.getLastSeenAt(),
-                    updateUser.isHasNewsletter(),
-                    updateUser.getUserSegments()
-            );
-            return ResponseEntity.ok(response);
-        }else{
+    public ResponseEntity<UserResponse> updateUserById(@PathVariable int id, @RequestBody UserRequest userRequest){
+        User user = userMapper.toUser(userRequest);
+        User updateUser = userService.updateUser(id, user);
+        if (user == null){
             return ResponseEntity.notFound().build();
+        }else {
+            return ResponseEntity.ok(userMapper.toUserResponse(updateUser));
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserById(@PathVariable int id){
-        Optional<User> user = userRepository.findById(id);
-        if (user.isPresent()){
-            userRepository.delete(user.get());
-            return ResponseEntity.noContent().build();
-        } else{
-            return ResponseEntity.notFound().build();
-        }
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 }
