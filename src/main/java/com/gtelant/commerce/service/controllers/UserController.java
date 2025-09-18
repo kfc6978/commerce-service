@@ -52,10 +52,11 @@ public class UserController {
     @GetMapping("/page")
     public Page<UserResponse> getAllUsersPages(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "") String query
     ){
         PageRequest pageRequest = PageRequest.of(page, size);
-        return userService.getAllUsers(pageRequest).map(userMapper::toUserResponse);
+        return userService.getAllUsers(query,pageRequest).map(userMapper::toUserResponse);
     }
 
     @GetMapping("/{id}")

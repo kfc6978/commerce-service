@@ -1,5 +1,6 @@
 package com.gtelant.commerce.service.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,7 +22,7 @@ public class Segment {
     @Column(name = "segment_id")
     private Integer id;
 
-    private String Name;
+    private String name;
 
     //@CreationTimestamp
     @Column(name = "created_at")
@@ -31,5 +32,6 @@ public class Segment {
     private LocalDateTime deleteAt;
 
     @OneToMany(mappedBy = "segment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @JsonManagedReference
     private List<UserSegment> userSegments;
 }

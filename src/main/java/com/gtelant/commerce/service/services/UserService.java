@@ -1,5 +1,6 @@
 package com.gtelant.commerce.service.services;
 
+import aj.org.objectweb.asm.commons.Remapper;
 import com.gtelant.commerce.service.dtos.UserSegmentResponse;
 import com.gtelant.commerce.service.models.Segment;
 import com.gtelant.commerce.service.models.User;
@@ -35,7 +36,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Page<User> getAllUsers(PageRequest pageRequest){
+    public Page<User> getAllUsers(String query, PageRequest pageRequest){
+        if(query != null&& !query.isEmpty()){
+            return userRepository.findByFirstNameContainingIgnoreCase(query, pageRequest);
+        }
         return userRepository.findAll(pageRequest);
     }
 

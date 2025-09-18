@@ -1,5 +1,6 @@
 package com.gtelant.commerce.service.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class UserSegment {
     private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    // JsonBackReference 和 JsonManagedReference 成對出現，能避迴圈的問題發生
 //    @JsonBackReference
     @JoinColumn(name = "user_id")
     private User user;
