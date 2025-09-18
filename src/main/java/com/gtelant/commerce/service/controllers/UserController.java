@@ -53,10 +53,12 @@ public class UserController {
     public Page<UserResponse> getAllUsersPages(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "") String query
+            @RequestParam(defaultValue = "") String query,
+            @RequestParam(required = false) Boolean hasNewsLetter,
+            @RequestParam(required = false) Integer segmentId
     ){
         PageRequest pageRequest = PageRequest.of(page, size);
-        return userService.getAllUsers(query,pageRequest).map(userMapper::toUserResponse);
+        return userService.getAllUsers(query, hasNewsLetter, segmentId, pageRequest).map(userMapper::toUserResponse);
     }
 
     @GetMapping("/{id}")
