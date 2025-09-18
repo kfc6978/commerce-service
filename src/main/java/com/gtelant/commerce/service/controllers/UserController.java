@@ -2,8 +2,10 @@ package com.gtelant.commerce.service.controllers;
 
 import com.gtelant.commerce.service.dtos.UserRequest;
 import com.gtelant.commerce.service.dtos.UserResponse;
+import com.gtelant.commerce.service.dtos.UserSegmentResponse;
 import com.gtelant.commerce.service.mappers.UserMapper;
 import com.gtelant.commerce.service.models.User;
+import com.gtelant.commerce.service.models.UserSegment;
 import com.gtelant.commerce.service.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,5 +83,18 @@ public class UserController {
     public ResponseEntity<Void> deleteUserById(@PathVariable int id){
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/segments/{segmentId}")
+    public ResponseEntity<Void> assignSegmentToUser(@PathVariable int id, @PathVariable int segmentId){
+        // todo
+        // 對user_segments insert row
+        userService.assignSegmentToUser(id, segmentId);
+        return ResponseEntity.noContent().build();
+//        List<UserSegment> assignSegments = userService.assignSegmentToUser(id, segmentId);
+//        List<UserSegmentResponse> userSegmentResponses = assignSegments.stream()
+//                .map(userMapper::toUserSegmentResponse)
+//                .collect(Collectors.toList());
+//        return ResponseEntity.ok(userSegmentResponses);
     }
 }
